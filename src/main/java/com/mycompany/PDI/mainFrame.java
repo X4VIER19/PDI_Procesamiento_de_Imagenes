@@ -926,37 +926,20 @@ public class mainFrame extends javax.swing.JFrame {
             return;
         }
 
-        // Abrir el diálogo de configuración
         Waifu2XSettings settingsDialog = new Waifu2XSettings(this, true);
         settingsDialog.setLocationRelativeTo(this);
         settingsDialog.setVisible(true);
 
-        // Verificar si el usuario hizo clic en UPSCALE
         if (!settingsDialog.wasUpscaleClicked()) {
-            return; // El usuario canceló
+            return;
         }
 
-        // Obtener valores del diálogo
         int noiseLevel = settingsDialog.getNoiseLevel();
         int scale = settingsDialog.getScale();
         boolean useTTA = settingsDialog.isTTAEnabled();
 
-        // Mostrar diálogo de espera
-        javax.swing.JLabel labelEspera = new javax.swing.JLabel("Procesando imagen con Waifu2X...\nEsto puede tomar unos segundos...");
-        labelEspera.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-
-        javax.swing.JOptionPane optionPane = new javax.swing.JOptionPane(
-                labelEspera,
-                javax.swing.JOptionPane.INFORMATION_MESSAGE,
-                javax.swing.JOptionPane.DEFAULT_OPTION,
-                null,
-                new Object[]{},
-                null
-        );
-
-        javax.swing.JDialog dialog = optionPane.createDialog(this, "Upscale de Imagen");
-        dialog.setDefaultCloseOperation(javax.swing.JDialog.DO_NOTHING_ON_CLOSE);
-        dialog.setModal(true);
+        Waifu2XProgressDialog progressDialog = new Waifu2XProgressDialog(this, true);
+        progressDialog.setLocationRelativeTo(this);
 
         new java.lang.Thread(() -> {
             try {
@@ -967,7 +950,7 @@ public class mainFrame extends javax.swing.JFrame {
                         useTTA
                 );
 
-                dialog.dispose();
+                progressDialog.close();
 
                 if (imagenProcesada != null) {
                     javax.swing.SwingUtilities.invokeLater(() -> {
@@ -995,7 +978,7 @@ public class mainFrame extends javax.swing.JFrame {
                     });
                 }
             } catch (Exception ex) {
-                dialog.dispose();
+                progressDialog.close();
                 javax.swing.SwingUtilities.invokeLater(() -> {
                     javax.swing.JOptionPane.showMessageDialog(mainFrame.this,
                             "Error durante el procesamiento: " + ex.getMessage(),
@@ -1005,7 +988,7 @@ public class mainFrame extends javax.swing.JFrame {
             }
         }).start();
 
-        dialog.setVisible(true);
+        progressDialog.setVisible(true);
     }//GEN-LAST:event_buttonUpScaleActionPerformed
 
     private void buttonInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonInfoActionPerformed
