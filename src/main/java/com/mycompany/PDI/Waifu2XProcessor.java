@@ -51,8 +51,9 @@ public class Waifu2XProcessor {
 
             // Construir el comando con parámetros dinámicos
             StringBuilder commandBuilder = new StringBuilder();
+            String execPath = getWaifu2XExecutablePath();
             commandBuilder.append(String.format("\"%s\" -i \"%s\" -o \"%s\" -n %d -s %d",
-                    WAIFU2X_EXECUTABLE,
+                    execPath,
                     tempInput.getAbsolutePath(),
                     TEMP_OUTPUT,
                     noiseLevel,
@@ -65,16 +66,38 @@ public class Waifu2XProcessor {
             }
 
             String command = commandBuilder.toString();
+            Process process;
+            String osType = getOperatingSystem();
+
+            try {
+                if (osType.equals("linux") || osType.equals("macos")) {
+                    // En Linux/Mac, usar bash
+                    String[] cmd = {"/bin/bash", "-c", command};
+                    process = Runtime.getRuntime().exec(cmd);
+                } else {
+                    // En Windows, ejecutar directamente
+                    process = Runtime.getRuntime().exec(command);
+                }
+            } catch (IOException ex) {
+                System.err.println("Error al ejecutar Waifu2X: " + ex.getMessage());
+                ex.printStackTrace();
+                return null;
+            }
             System.out.println("Ejecutando comando: " + command);
 
-            Process process = Runtime.getRuntime().exec(command);
-
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
             String line;
             StringBuilder output = new StringBuilder();
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
                 System.out.println("[Waifu2X] " + line);
+            }
+
+            String errorLine;
+            while ((errorLine = errorReader.readLine()) != null) {
+                System.err.println("[Waifu2X Error] " + errorLine);
             }
 
             int exitCode = process.waitFor();
@@ -112,14 +135,99 @@ public class Waifu2XProcessor {
         }
     }
 
+    public static String getOperatingSystem() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) {
+            return "windows";
+        } else if (os.contains("linux")) {
+            return "linux";
+        } else if (os.contains("mac")) {
+            return "macos";
+        }
+        return "unknown";
+    }
+
+    private static String getWaifu2XExecutablePath() {
+        String os = getOperatingSystem();
+        switch (os) {
+            case "windows":
+                return "bin/windows/waifu2x-ncnn-vulkan.exe";
+            case "linux":
+                return "bin/linux/waifu2x-ncnn-vulkan";
+            /*
+            case "macos":
+                return "bin/macos/waifu2x-ncnn-vulkan";*/
+            default:
+                return "waifu2x-ncnn-vulkan";
+        }
+    }
+
     /**
      * Verifica si Waifu2X está disponible en el sistema
      *
      * @return true si el ejecutable existe
      */
     public static boolean isWaifu2XAvailable() {
-        File waifu2x = new File(WAIFU2X_EXECUTABLE);
-        return waifu2x.exists() && waifu2x.isFile();
+        String execPath = getWaifu2XExecutablePath();
+        File waifu2x = new File(execPath);
+
+        if (!waifu2x.exists()) {
+            return false;
+        }
+
+        // En Linux, verificar que sea ejecutable
+        if (getOperatingSystem().equals("linux")) {
+            return waifu2x.canExecute();
+        }
+
+        return true;
+    }
+
+    public static boolean checkLinuxPermissions() {
+        if (!getOperatingSystem().equals("linux")) {
+            return true; // No es Linux, no aplica
+        }
+
+        String execPath = getWaifu2XExecutablePath();
+        File waifu2x = new File(execPath);
+        return waifu2x.canExecute();
+    }
+
+    public static void fixLinuxPermissions() {
+        if (!getOperatingSystem().equals("linux")) {
+            return; // No es Linux, no aplica
+        }
+
+        try {
+            String execPath = getWaifu2XExecutablePath();
+            File waifu2x = new File(execPath);
+            waifu2x.setExecutable(true, false); // true para propietario, false para otros
+            System.out.println("Permisos asignados a: " + execPath);
+        } catch (Exception e) {
+            System.err.println("Error al asignar permisos: " + e.getMessage());
+        }
+    }
+
+    public static String getWaifu2XErrorMessage() {
+        String os = getOperatingSystem();
+        String execPath = getWaifu2XExecutablePath();
+        File waifu2x = new File(execPath);
+
+        if (!waifu2x.exists()) {
+            return "El archivo de Waifu2X no existe en:\n" + execPath + "\n\n"
+                    + "Asegúrate de que el directorio 'bin/" + os + "/' existe y contiene el ejecutable.";
+        }
+
+        if (os.equals("linux") && !waifu2x.canExecute()) {
+            return "El archivo de Waifu2X no tiene permisos de ejecución en Linux.\n"
+                    + "Ruta: " + execPath + "\n\n"
+                    + "Para arreglarlo, abre una terminal y ejecuta:\n"
+                    + "chmod +x " + execPath;
+        }
+
+        return "No se puede acceder a Waifu2X.\n"
+                + "Sistema Operativo: " + os + "\n"
+                + "Ruta esperada: " + execPath;
     }
 
     /**

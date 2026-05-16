@@ -268,6 +268,7 @@ public class mainFrame extends javax.swing.JFrame {
         buttonSalir.setFocusPainted(false);
         buttonSalir.setOpaque(true);
         buttonSalir.setPreferredSize(new java.awt.Dimension(100, 55));
+        buttonSalir.addActionListener(this::buttonSalirActionPerformed);
         menuTopPanel.add(buttonSalir, java.awt.BorderLayout.EAST);
 
         labelTitulo.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
@@ -920,10 +921,34 @@ public class mainFrame extends javax.swing.JFrame {
         }
 
         if (!Waifu2XProcessor.isWaifu2XAvailable()) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                    "Waifu2X no está disponible.\n\nAsegúrate de que el archivo:\nbin/windows/waifu2x-ncnn-vulkan.exe\nexista en el directorio del proyecto.",
-                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
+            // Si es Linux y el archivo existe pero no tiene permisos
+            if (Waifu2XProcessor.getOperatingSystem().equals("linux") && !Waifu2XProcessor.checkLinuxPermissions()) {
+                int opcion = javax.swing.JOptionPane.showConfirmDialog(this,
+                        "Waifu2X no tiene permisos de ejecución en Linux.\n\n"
+                        + "¿Deseas que intente asignar los permisos automáticamente?\n"
+                        + "Si no funciona, deberás ejecutar manualmente:\n"
+                        + "chmod +x bin/linux/waifu2x-ncnn-vulkan",
+                        "Permisos Insuficientes",
+                        javax.swing.JOptionPane.YES_NO_OPTION,
+                        javax.swing.JOptionPane.WARNING_MESSAGE);
+
+                if (opcion == javax.swing.JOptionPane.YES_OPTION) {
+                    Waifu2XProcessor.fixLinuxPermissions();
+                    if (!Waifu2XProcessor.isWaifu2XAvailable()) {
+                        javax.swing.JOptionPane.showMessageDialog(this,
+                                Waifu2XProcessor.getWaifu2XErrorMessage(),
+                                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    }
+                    return;
+                } else {
+                    return;
+                }
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        Waifu2XProcessor.getWaifu2XErrorMessage(),
+                        "Waifu2X no disponible", javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
 
         Waifu2XSettings settingsDialog = new Waifu2XSettings(this, true);
@@ -994,6 +1019,10 @@ public class mainFrame extends javax.swing.JFrame {
     private void buttonInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonInfoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_buttonInfoActionPerformed
+
+    private void buttonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSalirActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_buttonSalirActionPerformed
 
     /**
      * @param args the command line arguments
