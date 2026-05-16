@@ -24,7 +24,7 @@ public class Waifu2XProcessor {
 
     // Parámetros fijos por ahora
     private static final String NOISE_LEVEL = "2";  // -n 2
-    private static final String SCALE = "2";        // -s 2
+    private static final String SCALE = "2";        // -s 
 
     /**
      * Procesa una imagen con Waifu2X
@@ -49,7 +49,6 @@ public class Waifu2XProcessor {
 
             System.out.println("Archivo temporal creado: " + tempInput.getAbsolutePath());
 
-            // Construir el comando con parámetros dinámicos
             StringBuilder commandBuilder = new StringBuilder();
             String execPath = getWaifu2XExecutablePath();
             commandBuilder.append(String.format("\"%s\" -i \"%s\" -o \"%s\" -n %d -s %d",
@@ -154,9 +153,8 @@ public class Waifu2XProcessor {
                 return "bin/windows/waifu2x-ncnn-vulkan.exe";
             case "linux":
                 return "bin/linux/waifu2x-ncnn-vulkan";
-            /*
             case "macos":
-                return "bin/macos/waifu2x-ncnn-vulkan";*/
+                return "bin/macos/waifu2x-ncnn-vulkan";
             default:
                 return "waifu2x-ncnn-vulkan";
         }
@@ -175,7 +173,6 @@ public class Waifu2XProcessor {
             return false;
         }
 
-        // En Linux, verificar que sea ejecutable
         if (getOperatingSystem().equals("linux")) {
             return waifu2x.canExecute();
         }
@@ -185,7 +182,7 @@ public class Waifu2XProcessor {
 
     public static boolean checkLinuxPermissions() {
         if (!getOperatingSystem().equals("linux")) {
-            return true; // No es Linux, no aplica
+            return true;
         }
 
         String execPath = getWaifu2XExecutablePath();
@@ -195,13 +192,13 @@ public class Waifu2XProcessor {
 
     public static void fixLinuxPermissions() {
         if (!getOperatingSystem().equals("linux")) {
-            return; // No es Linux, no aplica
+            return;
         }
 
         try {
             String execPath = getWaifu2XExecutablePath();
             File waifu2x = new File(execPath);
-            waifu2x.setExecutable(true, false); // true para propietario, false para otros
+            waifu2x.setExecutable(true, false);
             System.out.println("Permisos asignados a: " + execPath);
         } catch (Exception e) {
             System.err.println("Error al asignar permisos: " + e.getMessage());
