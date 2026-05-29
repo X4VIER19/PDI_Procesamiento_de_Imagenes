@@ -24,6 +24,7 @@ public class PDI_Procesamiento_de_Imagenes {
             frameBienvenida frame = new frameBienvenida();
             frame.setVisible(true);
             frame.setLocationRelativeTo(null);
+            // Estilo profecional 
         });
     }
 }
