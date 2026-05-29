@@ -2,7 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.mycompany.PDI;
+package com.mycompany.PDI.Frames;
+
+import com.mycompany.PDI.Frames.mainFrame;
 
 /**
  *
@@ -57,9 +59,7 @@ public class frameBienvenida extends javax.swing.JFrame {
         jPanelSpace9 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(450, 550));
         setMinimumSize(new java.awt.Dimension(420, 550));
-        setPreferredSize(new java.awt.Dimension(450, 550));
         setResizable(false);
 
         panelBackground.setBackground(new java.awt.Color(10, 10, 10));

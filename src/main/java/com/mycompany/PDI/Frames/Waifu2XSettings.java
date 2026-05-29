@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package com.mycompany.PDI;
+package com.mycompany.PDI.Frames;
 
 /**
  *
@@ -114,7 +114,6 @@ public class Waifu2XSettings extends javax.swing.JDialog {
         setTitle("Configuración de Upscalling");
         setMinimumSize(new java.awt.Dimension(550, 350));
         setModal(true);
-        setPreferredSize(new java.awt.Dimension(550, 350));
         setResizable(false);
 
         mainPanel.setBackground(new java.awt.Color(10, 10, 10));

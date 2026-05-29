@@ -59,7 +59,6 @@ public class Waifu2XProcessor {
                     scale
             ));
 
-            // Agregar TTA si está habilitado
             if (useTTA) {
                 commandBuilder.append(" -x");
             }
@@ -70,11 +69,9 @@ public class Waifu2XProcessor {
 
             try {
                 if (osType.equals("linux") || osType.equals("macos")) {
-                    // En Linux/Mac, usar bash
                     String[] cmd = {"/bin/bash", "-c", command};
                     process = Runtime.getRuntime().exec(cmd);
                 } else {
-                    // En Windows, ejecutar directamente
                     process = Runtime.getRuntime().exec(command);
                 }
             } catch (IOException ex) {
@@ -161,7 +158,7 @@ public class Waifu2XProcessor {
     }
 
     /**
-     * Verifica si Waifu2X está disponible en el sistema
+     * Verificar si Waifu2X está disponible en el sistema
      *
      * @return true si el ejecutable existe
      */
