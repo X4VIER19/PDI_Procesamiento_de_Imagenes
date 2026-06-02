@@ -41,7 +41,7 @@ public class mainFrame extends javax.swing.JFrame {
         int alto = img.getHeight();
         totalPixeles = ancho * alto;
 
-        imagenGrises = new java.awt.image.BufferedImage(ancho, alto, java.awt.image.BufferedImage.TYPE_BYTE_GRAY);
+        imagenGrises = new java.awt.image.BufferedImage(ancho, alto, java.awt.image.BufferedImage.TYPE_INT_RGB);
 
         for (int y = 0; y < alto; y++) {
             for (int x = 0; x < ancho; x++) {
@@ -59,7 +59,8 @@ public class mainFrame extends javax.swing.JFrame {
                 freqAzul[b]++;
                 freqLuma[luma]++;
 
-                imagenGrises.getRaster().setSample(x, y, 0, luma);
+                int grisRGB = (luma << 16) | (luma << 8) | luma;
+                imagenGrises.setRGB(x, y, grisRGB);
             }
         }
     }
@@ -832,14 +833,16 @@ public class mainFrame extends javax.swing.JFrame {
 
         int ancho = imagenGrises.getWidth();
         int alto = imagenGrises.getHeight();
+
         java.awt.image.BufferedImage imagenBinarizada = new java.awt.image.BufferedImage(
-                ancho, alto, java.awt.image.BufferedImage.TYPE_BYTE_GRAY);
+                ancho, alto, java.awt.image.BufferedImage.TYPE_INT_RGB);
 
         for (int y = 0; y < alto; y++) {
             for (int x = 0; x < ancho; x++) {
                 int nivelGris = imagenGrises.getRaster().getSample(x, y, 0);
                 int binario = (nivelGris > umbral) ? 255 : 0;
-                imagenBinarizada.getRaster().setSample(x, y, 0, binario);
+                int rgb = (binario << 16) | (binario << 8) | binario;
+                imagenBinarizada.setRGB(x, y, rgb);
             }
         }
 
