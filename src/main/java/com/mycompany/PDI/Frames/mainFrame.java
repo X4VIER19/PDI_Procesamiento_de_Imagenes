@@ -29,6 +29,7 @@ public class mainFrame extends javax.swing.JFrame {
      */
     public mainFrame() {
         initComponents();
+        buttonInfo.setVisible(false);
     }
 
     private void calcularEstadisticas(java.awt.image.BufferedImage img) {
@@ -835,6 +836,7 @@ public class mainFrame extends javax.swing.JFrame {
         int alto = imagenGrises.getHeight();
 
         java.awt.image.BufferedImage imagenBinarizada = new java.awt.image.BufferedImage(
+                
                 ancho, alto, java.awt.image.BufferedImage.TYPE_INT_RGB);
 
         for (int y = 0; y < alto; y++) {
