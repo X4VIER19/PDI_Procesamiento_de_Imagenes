@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.mycompany.PDI.Frames;
+package com.x4vier19.PDI.Frames;
 
-import com.mycompany.PDI.Frames.mainFrame;
+import com.x4vier19.PDI.Frames.mainFrame;
 
 /**
  *

@@ -1,4 +1,4 @@
-package com.mycompany.PDI;
+package com.x4vier19.PDI;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
